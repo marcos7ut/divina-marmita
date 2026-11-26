@@ -1,0 +1,938 @@
+{
+ "categorias": [
+  {
+   "id": "dia",
+   "nome": "Prato do dia"
+  },
+  {
+   "id": "bov",
+   "nome": "Carnes bovinas"
+  },
+  {
+   "id": "fra",
+   "nome": "Frango"
+  },
+  {
+   "id": "sui",
+   "nome": "Suínos e linguiças"
+  },
+  {
+   "id": "fei",
+   "nome": "Feijoada"
+  },
+  {
+   "id": "esp",
+   "nome": "Especiais"
+  },
+  {
+   "id": "add",
+   "nome": "Adicionais"
+  },
+  {
+   "id": "beb",
+   "nome": "Bebidas"
+  },
+  {
+   "id": "sob",
+   "nome": "Sobremesas"
+  },
+  {
+   "id": "conv",
+   "nome": "Conveniência"
+  }
+ ],
+ "pratos": [
+  {
+   "id": "pdia",
+   "nome": "Prato do Dia Completo",
+   "desc": "Bife acebolado, ovo frito, feijão com calabresa e bacon, arroz e farofa. Acompanha mini Coca ou Fanta.",
+   "cat": "dia",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 22
+    }
+   ],
+   "img": "pdia.webp"
+  },
+  {
+   "id": "lagarto",
+   "nome": "Lagarto Assado na Pressão",
+   "desc": "Feijão carioca, arroz branco, macarrão e farofa.",
+   "cat": "bov",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 24
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 29
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 35
+    }
+   ],
+   "img": "lagarto.webp"
+  },
+  {
+   "id": "panela",
+   "nome": "Carne de Panela com Purê",
+   "desc": "Feijão carioca, arroz branco e farofa.",
+   "cat": "bov",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 24
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 27
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 32
+    }
+   ],
+   "img": "panela.webp"
+  },
+  {
+   "id": "bife",
+   "nome": "Bife Acebolado",
+   "desc": "Feijão carioca, arroz branco, macarrão alho e óleo e farofa.",
+   "cat": "bov",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 25
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 28
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 32
+    }
+   ],
+   "img": "bife.webp"
+  },
+  {
+   "id": "coxao",
+   "nome": "Coxão Mole ao Molho",
+   "desc": "Batatas cozidas, espaguete ao molho, arroz branco e feijão carioca.",
+   "cat": "bov",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 24
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 27
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "coxao.webp"
+  },
+  {
+   "id": "almond",
+   "nome": "Almôndegas ao Molho",
+   "desc": "Com macarrão, feijão carioca e arroz branco.",
+   "cat": "bov",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 23
+    }
+   ],
+   "img": "almond.webp",
+   "confirmarPreco": true
+  },
+  {
+   "id": "parm",
+   "nome": "Parmegiana de Frango",
+   "desc": "Com arroz branco e batata palha.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "parm.webp"
+  },
+  {
+   "id": "parmpure",
+   "nome": "Parmegiana de Frango com Purê",
+   "desc": "Arroz branco e purê de batata cremoso.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 40
+    }
+   ],
+   "img": "parmpure.webp",
+   "confirmarPreco": true
+  },
+  {
+   "id": "xadrez",
+   "nome": "Frango Xadrez com Purê",
+   "desc": "Feijão carioca, arroz branco e farofa.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 22
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "xadrez.webp"
+  },
+  {
+   "id": "medalhao",
+   "nome": "Medalhão de Frango",
+   "desc": "Feijão carioca, arroz branco, farofa e macarrão.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 23
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "medalhao.webp"
+  },
+  {
+   "id": "recheado",
+   "nome": "Medalhão de Frango Recheado com Calabresa",
+   "desc": "Feijão carioca, arroz branco e espaguete ao molho.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 24
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 27
+    }
+   ],
+   "img": "recheado.webp"
+  },
+  {
+   "id": "coxa",
+   "nome": "Coxa com Sobrecoxa Assadas",
+   "desc": "Arroz branco, feijão carioca e farofa.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 23
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "coxa.webp"
+  },
+  {
+   "id": "estrog",
+   "nome": "Estrogonofe de Frango",
+   "desc": "Com batata palha e arroz branco.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 23
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    }
+   ],
+   "img": "estrog.webp"
+  },
+  {
+   "id": "frangoas",
+   "nome": "Frango Assado",
+   "desc": "Com macarrão alho e óleo, feijão e arroz fresquinho.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 27
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "empanado",
+   "nome": "Frango Empanado",
+   "desc": "Arroz branco e batata palha.",
+   "cat": "fra",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "empanado.webp",
+   "confirmarPreco": true
+  },
+  {
+   "id": "costela",
+   "nome": "Costelinha Suína",
+   "desc": "Feijão carioca, arroz branco, macarrão alho e óleo e farofa.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 24
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 27
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "costela.webp"
+  },
+  {
+   "id": "costtrop",
+   "nome": "Costelinha Suína com Feijão Tropeiro",
+   "desc": "Arroz branco e macarrão no alho e óleo.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 25
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "costtrop.webp"
+  },
+  {
+   "id": "linguica",
+   "nome": "Linguiça Toscana Assada com Ovo",
+   "desc": "Feijão carioca, arroz branco, couve e farofa.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 25
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 26
+    }
+   ],
+   "img": "linguica.webp"
+  },
+  {
+   "id": "lintrop",
+   "nome": "Linguiça Toscana na Brasa com Feijão Tropeiro",
+   "desc": "Arroz branco e macarrão no alho e óleo.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 22
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 26
+    }
+   ],
+   "img": "lintrop.webp"
+  },
+  {
+   "id": "bisteca",
+   "nome": "Bisteca Suína com Ovo Frito",
+   "desc": "Feijão carioca, arroz branco, couve e farofa.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 22
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 26
+    }
+   ],
+   "img": "bisteca.webp"
+  },
+  {
+   "id": "feijpreto",
+   "nome": "Feijão Preto com Costelinha Frita",
+   "desc": "Couve, farofa e arroz branco.",
+   "cat": "sui",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 28
+    }
+   ]
+  },
+  {
+   "id": "feijoada",
+   "nome": "Feijoada",
+   "desc": "M em porção única · G (Completa) com acompanhamentos separados: arroz, couve, farofa, torresmo e vinagrete.",
+   "cat": "fei",
+   "tamanhos": [
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 28
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 35
+    }
+   ],
+   "img": "feijoada.webp",
+   "selo": "Qua e Sáb"
+  },
+  {
+   "id": "batata",
+   "nome": "Batata Recheada",
+   "desc": "Estrogonofe de frango, requeijão, queijo, batata palha e bacon.",
+   "cat": "esp",
+   "tamanhos": [
+    {
+     "id": "Único",
+     "nome": "Único",
+     "preco": 28
+    }
+   ],
+   "img": "batata.webp",
+   "selo": "Especial"
+  },
+  {
+   "id": "batatalc",
+   "nome": "Batata Recheada com Strogonoff de Alcatra",
+   "desc": "Batata assada recheada com strogonoff de alcatra.",
+   "cat": "esp",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 30
+    }
+   ]
+  },
+  {
+   "id": "lasanha",
+   "nome": "Lasanha",
+   "desc": "Camadas de massa, molho e queijo gratinado. Bem servida, com arroz branco e salada.",
+   "cat": "esp",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 32
+    }
+   ],
+   "img": "lasanha.webp",
+   "confirmarPreco": true
+  },
+  {
+   "id": "mac",
+   "nome": "Mac and Cheese",
+   "desc": "Especial de sexta e sábado no jantar.",
+   "cat": "esp",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 30
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "escond",
+   "nome": "Escondidinho de Frango",
+   "desc": "Com arroz branco e batata palha.",
+   "cat": "esp",
+   "tamanhos": [
+    {
+     "id": "P",
+     "nome": "P",
+     "preco": 23
+    },
+    {
+     "id": "M",
+     "nome": "M",
+     "preco": 26
+    },
+    {
+     "id": "G",
+     "nome": "G",
+     "preco": 30
+    }
+   ],
+   "img": "escond.webp"
+  },
+  {
+   "id": "ovo",
+   "nome": "Ovo Frito Extra",
+   "desc": "Adicional para o seu prato.",
+   "cat": "add",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 3
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "farx",
+   "nome": "Farofa Extra",
+   "desc": "Porção adicional de farofa da casa.",
+   "cat": "add",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 5
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "arrx",
+   "nome": "Arroz Extra",
+   "desc": "Porção adicional de arroz branco.",
+   "cat": "add",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 5
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "fejx",
+   "nome": "Feijão Extra",
+   "desc": "Porção adicional de feijão carioca.",
+   "cat": "add",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 5
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "palha",
+   "nome": "Batata Palha Extra",
+   "desc": "Porção adicional de batata palha.",
+   "cat": "add",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 4
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "cola",
+   "nome": "Mini Coca-Cola",
+   "desc": "Geladinha, para acompanhar sua marmita.",
+   "cat": "beb",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 4
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "fanta",
+   "nome": "Mini Fanta",
+   "desc": "Geladinha, para acompanhar sua marmita.",
+   "cat": "beb",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 4
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "agua",
+   "nome": "Água Mineral",
+   "desc": "Água mineral gelada.",
+   "cat": "beb",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 3
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "suco",
+   "nome": "Suco Natural",
+   "desc": "Feito na hora, sabor do dia.",
+   "cat": "beb",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 7
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "pudim",
+   "nome": "Pudim",
+   "desc": "Fatia cremosa de pudim de leite.",
+   "cat": "sob",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 8
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "mousse",
+   "nome": "Mousse de Maracujá",
+   "desc": "Sobremesa gelada e leve.",
+   "cat": "sob",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 8
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "brig",
+   "nome": "Brigadeiro de Pote",
+   "desc": "Cremoso, para fechar a refeição.",
+   "cat": "sob",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 5
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "refri2",
+   "nome": "Refrigerante 2 Litros",
+   "desc": "Para a família toda. Sabores conforme disponibilidade.",
+   "cat": "conv",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 12
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "agua15",
+   "nome": "Água Mineral 1,5 L",
+   "desc": "Água mineral gelada.",
+   "cat": "conv",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 5
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "gelo",
+   "nome": "Saquinho de Gelo",
+   "desc": "Para gelar sua bebida.",
+   "cat": "conv",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 4
+    }
+   ],
+   "confirmarPreco": true
+  },
+  {
+   "id": "talher",
+   "nome": "Kit Talheres Descartáveis",
+   "desc": "Garfo, faca e guardanapo.",
+   "cat": "conv",
+   "tamanhos": [
+    {
+     "id": "Única",
+     "nome": "Única",
+     "preco": 1
+    }
+   ],
+   "confirmarPreco": true
+  }
+ ],
+ "semana": {
+  "1": [
+   "pdia",
+   "parm",
+   "panela",
+   "xadrez",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "2": [
+   "pdia",
+   "lagarto",
+   "medalhao",
+   "frangoas",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "3": [
+   "pdia",
+   "feijoada",
+   "coxa",
+   "feijpreto",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "4": [
+   "pdia",
+   "bife",
+   "costela",
+   "lasanha",
+   "coxao",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "5": [
+   "pdia",
+   "linguica",
+   "bisteca",
+   "estrog",
+   "batata",
+   "batatalc",
+   "mac",
+   "almond",
+   "recheado",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "6": [
+   "feijoada",
+   "batata",
+   "batatalc",
+   "estrog",
+   "escond",
+   "mac",
+   "costtrop",
+   "lintrop",
+   "parmpure",
+   "ovo",
+   "farx",
+   "arrx",
+   "fejx",
+   "palha",
+   "cola",
+   "fanta",
+   "agua",
+   "suco",
+   "pudim",
+   "mousse",
+   "brig",
+   "refri2",
+   "agua15",
+   "gelo",
+   "talher"
+  ],
+  "0": []
+ }
+}

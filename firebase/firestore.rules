@@ -1,0 +1,90 @@
+rules_version = '2';
+
+// =====================================================================
+//  Divina Marmita – regras do Cloud Firestore
+//
+//  ANTES DE PUBLICAR: troque OWNER_UID abaixo pelo UID do dono
+//  (Firebase Console > Authentication > Usuários > coluna "UID do usuário").
+//  Passo a passo em docs/SETUP-FIREBASE.md.
+//
+//  Princípio: o público só consegue o mínimo necessário.
+//    - ler o cardápio/ajustes (config)
+//    - CRIAR um pedido válido e ler o próprio pedido (pelo id aleatório)
+//    - CRIAR um cadastro na lista VIP
+//  Todo o resto (listar pedidos, ler leads, mudar cardápio, atualizar
+//  status) é exclusivo do dono. Tudo que não está escrito é NEGADO.
+// =====================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'OWNER_UID';
+    }
+
+    // ---------- Cardápio e ajustes (leitura pública, escrita só do dono) ----------
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isOwner() && docId in ['menu', 'ops', 'plan'];
+    }
+
+    // ---------- Pedidos ----------
+    match /orders/{orderId} {
+      // "get" por id: o id tem 128 bits aleatórios, então funciona como link secreto
+      // para o cliente acompanhar o pedido. "list" (varrer pedidos) é só do dono.
+      allow get: if true;
+      allow list: if isOwner();
+      allow create: if validOrder(orderId);
+      allow update: if isOwner();
+      allow delete: if false;
+    }
+
+    function validOrder(orderId) {
+      let d = request.resource.data;
+      let now = request.time.toMillis();
+      return d.keys().hasOnly(['id', 't', 'status', 'nome', 'tel', 'tipo', 'end', 'pag', 'troco', 'obs', 'taxa', 'total', 'itens', 'eta'])
+        && d.keys().hasAll(['id', 't', 'status', 'nome', 'tipo', 'pag', 'taxa', 'total', 'itens', 'eta'])
+        && orderId.matches('^[0-9a-f]{32}$')
+        && d.id == orderId
+        && d.status == 'novo'
+        && d.t is int && d.t > now - 600000 && d.t < now + 600000
+        && d.nome is string && d.nome.size() >= 2 && d.nome.size() <= 60
+        && (!('tel' in d) || (d.tel is string && d.tel.size() <= 13))
+        && d.tipo in ['e', 'r']
+        && (!('end' in d) || (d.end is string && d.end.size() <= 140))
+        && (d.tipo == 'r' || ('end' in d && d.end.size() >= 6))
+        && d.pag in ['Pix', 'Link de pagamento (débito/crédito)', 'Dinheiro', 'Débito/Crédito na entrega']
+        && (!('troco' in d) || (d.troco is string && d.troco.size() <= 20))
+        && (!('obs' in d) || (d.obs is string && d.obs.size() <= 200))
+        && d.taxa is number && d.taxa >= 0 && d.taxa <= 10
+        && d.total is number && d.total >= 1 && d.total <= 3000
+        && d.itens is list && d.itens.size() >= 1 && d.itens.size() <= 40
+        && d.eta is map && d.eta.keys().hasOnly(['min', 'max'])
+        && d.eta.min is int && d.eta.max is int && d.eta.min >= 0 && d.eta.max <= 600;
+    }
+
+    // ---------- Lista VIP ----------
+    match /leads/{leadId} {
+      allow create: if validLead(leadId);
+      allow read, update, delete: if isOwner();
+    }
+
+    function validLead(leadId) {
+      let d = request.resource.data;
+      let now = request.time.toMillis();
+      return d.keys().hasOnly(['id', 't', 'nome', 'tel', 'email', 'interesses'])
+        && d.keys().hasAll(['id', 't', 'nome', 'tel', 'interesses'])
+        && leadId.matches('^[0-9a-f]{32}$')
+        && d.id == leadId
+        && d.t is int && d.t > now - 600000 && d.t < now + 600000
+        && d.nome is string && d.nome.size() >= 2 && d.nome.size() <= 60
+        && d.tel is string && d.tel.size() >= 10 && d.tel.size() <= 13
+        && (!('email' in d) || (d.email is string && d.email.size() <= 100))
+        && d.interesses is string && d.interesses.size() <= 120;
+    }
+
+    // ---------- Todo o resto: negado ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
