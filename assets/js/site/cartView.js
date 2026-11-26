@@ -1,4 +1,4 @@
-import { $, h } from '../lib/dom.js';
+import { $, h, fill } from '../lib/dom.js';
 import { brl } from '../lib/money.js';
 import { change, totals, MIN_ORDER, FEE } from '../lib/cart.js';
 import { buildOrder, PAYMENTS } from '../lib/validate.js';
@@ -13,8 +13,8 @@ const draft = { nome: load('nome', ''), tel: load('tel', ''), end: load('end', '
 export function renderTab() {
   const t = totals(S.cart, S.catalog, S.mode);
   $('#tab').hidden = t.count === 0;
-  $('#tab-n').textContent = t.count;
-  $('#tab-t').textContent = brl(t.subtotal);
+  $('#tab-c').textContent = '🛒 ' + t.count + (t.count === 1 ? ' item' : ' itens');
+  $('#tab-t').textContent = 'Ver carrinho · ' + brl(t.subtotal);
 }
 $('#tab').addEventListener('click', openCart);
 
@@ -26,9 +26,9 @@ export function openCart() {
     if ($('#c-nome')) readForm();
     const t = totals(S.cart, S.catalog, S.mode), ops = opsNow(), eta = etaNow(S.mode);
     if (!t.lines.length) { closeSheet(); return; }
-    root.replaceChildren(
-      h('h3', { id: 'sheet-t' }, 'Seu pedido'),
-      h('div', { class: 'ticket' },
+    fill(root,
+      h('h3', { id: 'sheet-t' }, 'Seu pedido 🛒'),
+      h('div', {},
         ...t.lines.map((l) => h('div', { class: 'it' },
           h('span', {}, h('b', {}, l.n), h('small', {}, `${l.s} · ${brl(l.p)}`)),
           h('span', { class: 'qty' }, h('button', { type: 'button', 'aria-label': 'Diminuir ' + l.n, onclick: () => step(l.k, -1) }, '−'), h('span', {}, String(l.q)), h('button', { type: 'button', 'aria-label': 'Aumentar ' + l.n, onclick: () => step(l.k, 1) }, '+')),
@@ -43,17 +43,17 @@ export function openCart() {
         h('button', { type: 'button', 'aria-pressed': String(S.mode === 'e'), onclick: () => { S.mode = 'e'; draw(); } }, 'Entrega'),
         h('button', { type: 'button', 'aria-pressed': String(S.mode === 'r'), onclick: () => { S.mode = 'r'; draw(); } }, 'Retirada'),
       ),
-      h('div', { class: 'eta' }, h('span', {}, 'Previsão'), h('span', { class: 'mono' }, `${eta.min}–${eta.max} min`), ops.aberto === false ? h('span', { class: 'err' }, 'Pedidos pausados agora') : null),
-      h('form', { class: 'form', id: 'c-form', novalidate: true, onsubmit: submit },
+      h('div', { class: 'eta' }, h('span', {}, '⏱️ Previsão'), h('b', {}, `${eta.min}–${eta.max} min`), ops.aberto === false ? h('span', { class: 'warn' }, 'Pedidos pausados agora') : null),
+      h('form', { class: 'f', id: 'c-form', novalidate: true, onsubmit: submit },
         field('Seu nome', h('input', { id: 'c-nome', autocomplete: 'name', maxlength: 60, value: draft.nome, placeholder: 'Como podemos te chamar?' })),
         field('WhatsApp (opcional, para avisos)', h('input', { id: 'c-tel', inputmode: 'tel', autocomplete: 'tel', maxlength: 20, value: draft.tel, placeholder: '(15) 9 9999-9999' })),
         S.mode === 'e' ? field('Endereço de entrega (até 3 km)', h('input', { id: 'c-end', autocomplete: 'street-address', maxlength: 140, value: draft.end, placeholder: 'Rua, número, bairro' })) : null,
         field('Pagamento', h('select', { id: 'c-pag', onchange: (e) => { S.pay = e.target.value; draw(); } }, ...PAYMENTS.map((o) => h('option', { value: o, selected: o === S.pay }, o)))),
         S.pay === 'Dinheiro' ? field('Troco para quanto?', h('input', { id: 'c-troco', maxlength: 20, value: draft.troco, placeholder: 'Ex.: R$ 50' })) : null,
         field('Observações', h('textarea', { id: 'c-obs', maxlength: 200, placeholder: 'Sem cebola, caprichar na farofa…' }, draft.obs)),
-        t.missing > 0 ? h('div', { class: 'note' }, `Faltam ${brl(t.missing)} para o pedido mínimo de ${brl(MIN_ORDER)}.`) : null,
-        h('div', { class: 'err', id: 'c-err', role: 'alert', hidden: true }),
-        h('button', { class: 'btn btn--leaf', type: 'submit', disabled: t.missing > 0 }, 'Enviar pedido'),
+        t.missing > 0 ? h('div', { class: 'warn' }, `Faltam ${brl(t.missing)} para o pedido mínimo de ${brl(MIN_ORDER)}.`) : null,
+        h('div', { class: 'warn', id: 'c-err', role: 'alert', hidden: true }),
+        h('button', { class: 'btn g', type: 'submit', disabled: t.missing > 0 }, 'Enviar pedido no WhatsApp'),
         h('p', { class: 'note' }, 'O pedido chega na cozinha e abre a conversa no WhatsApp para confirmar.'),
       ),
     );
@@ -64,7 +64,7 @@ export function openCart() {
   openSheet(root);
 }
 
-const field = (label, input) => h('label', { class: 'field' }, label, input);
+const field = (label, input) => h('label', {}, label, input);
 
 async function submit(e) {
   e.preventDefault();
@@ -89,12 +89,12 @@ async function submit(e) {
 
 function thanks(o, link, saved, opened) {
   openSheet(h('div', { class: 'thx' },
-    h('div', { class: 'em', 'aria-hidden': 'true' }, '🍲'),
+    h('div', { class: 'em', 'aria-hidden': 'true' }, '🎉'),
     h('h3', { id: 'sheet-t' }, `Pedido enviado, ${o.nome.split(' ')[0]}!`),
     h('p', {}, saved ? `Já está na cozinha. Previsão de ${o.eta.min}–${o.eta.max} min. Você acompanha pelo topo da página.` : 'Não conseguimos avisar o painel agora, mas o pedido segue pelo WhatsApp. Confirme por lá.'),
     h('div', { class: 'links' },
-      h('a', { class: 'btn btn--leaf', href: link, target: '_blank', rel: 'noopener' }, opened ? 'Abrir o WhatsApp de novo' : 'Confirmar no WhatsApp'),
-      h('button', { class: 'btn btn--ghost', type: 'button', onclick: closeSheet }, 'Voltar ao cardápio'),
+      h('a', { class: 'btn g', href: link, target: '_blank', rel: 'noopener' }, opened ? 'Abrir o WhatsApp de novo' : 'Confirmar no WhatsApp'),
+      h('button', { class: 'btn', type: 'button', onclick: closeSheet }, 'Voltar ao cardápio'),
     ),
   ));
 }

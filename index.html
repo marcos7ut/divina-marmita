@@ -5,147 +5,131 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.google.com; frame-src https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="theme-color" content="#f4ead8">
-<title>Divina Marmita – Comida de casa, feita hoje</title>
-<meta name="description" content="Cardápio do dia da Divina Marmita, Bairro do Éden. Veja o que saiu da cozinha hoje, monte seu pedido e acompanhe até chegar.">
+<meta name="theme-color" content="#d62828">
+<title>Divina Marmita – Cardápio Online</title>
+<meta name="description" content="Cardápio do dia da Divina Marmita, Bairro do Éden. Escolha o prato, monte seu pedido e acompanhe até chegar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Spline+Sans+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Poppins:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 </head>
 <body>
-<header class="bar">
-  <div class="bar__in">
-    <a class="mark" href="#topo">Divina <b>Marmita</b></a>
-    <span class="live" id="live" data-on="0">verificando…</span>
-    <nav aria-label="Seções">
-      <a href="#cardapio">Cardápio</a><a href="#feijoada">Feijoada</a><a href="#cantinho">Cantinho</a><a href="#vip">Lista VIP</a>
-    </nav>
-  </div>
-</header>
+<div class="top" id="top">
+  <a class="adm" href="painel/" aria-label="Área do restaurante" title="Área do restaurante">🔐</a>
+  <span>📍 <b>Rua João Mostafá, 602</b> – Bairro do Éden</span>
+  <span>🕒 Seg a Sáb · 11h–14h e 18h30–22h</span>
+  <span class="st" id="live" data-on="0">Verificando…</span>
+  <div class="nav"><a href="#cardapio">🍽️ Cardápio</a><a href="#reserva">🍲 Feijoada</a><a href="#cantinho">📖 Cantinho Divina</a><a href="#vip">🎁 Lista VIP</a></div>
+</div>
 
 <div class="track" id="track" hidden></div>
 
-<main id="topo">
-  <section class="wrap hero">
-    <div>
-      <p class="kicker">Bairro do Éden · comida caseira</p>
-      <h1>Comida de casa,<br>feita <em>hoje</em>.</h1>
-      <p class="lead">Escolha o prato do dia, monte o pedido e acompanhe a marmita até a sua porta. Sem cadastro.</p>
-      <div class="cta">
-        <a class="btn" href="#cardapio">Ver o cardápio de hoje</a>
-        <a class="btn btn--ghost" href="#feijoada">Reservar feijoada</a>
-      </div>
-      <div class="facts"><span>Entrega R$ 2,99 até 3 km</span><span>Pix, cartão e dinheiro</span><span>Feijoada quarta e sábado</span></div>
-    </div>
-    <aside class="board" aria-labelledby="board-t">
-      <h2 id="board-t">Hoje tem <small id="board-day"></small></h2>
-      <ul id="board-list" aria-live="polite"></ul>
-      <p class="foot" id="board-foot"></p>
-    </aside>
-  </section>
+<header class="hero">
+  <div class="sl" id="sl"></div><div class="hcap" id="hc"></div><div class="hdots" id="hd"></div>
+  <div class="tag">Comida caseira · feita com amor</div>
+  <h1>Divina <span>Marmita</span></h1>
+  <p>Sabor caseiro em cada refeição. Escolha o prato do dia, monte seu pedido e acompanhe até chegar.</p>
+  <a class="btn glow" href="#cardapio">Ver cardápio de hoje</a>
+  <a class="btn red" href="#reserva">🍲 Reservar feijoada</a>
+  <a class="btn g wl">💬 Pedir no WhatsApp</a>
+  <div class="pills"><span>🛵 Entrega R$ 2,99 até 3 km</span><span>💳 Pix, cartão e dinheiro</span><span>🔥 Feijoada qua e sáb</span></div>
+</header>
 
-  <section class="wrap sec" id="cardapio">
-    <div class="sec__head">
-      <h2>Cardápio do dia</h2>
-      <p>Pedido mínimo de R$ 25,00. Toque no prato para escolher o tamanho.</p>
-    </div>
-    <div class="tools">
-      <label class="search"><span aria-hidden="true">⌕</span><span class="sr">Buscar no cardápio</span><input id="q" type="search" placeholder="Buscar no cardápio" autocomplete="off"></label>
-      <div class="chips" id="cats" role="group" aria-label="Categorias"></div>
-    </div>
-    <div id="menu"></div>
-  </section>
-
-  <section class="wrap sec" id="feijoada">
-    <div class="res">
-      <div>
-        <p class="kicker">Quarta e sábado</p>
-        <h2 class="sec__h">Reserve sua feijoada</h2>
-        <p class="lead2">Reserve com 1 dia de antecedência e garanta a sua, para retirar ou receber em casa.</p>
-        <span class="gift">Quem reserva ganha mini refrigerante</span>
-        <img src="assets/img/feijoada.webp" alt="Feijoada Divina Marmita servida com acompanhamentos" width="900" height="600" loading="lazy">
+<section id="reserva">
+  <div class="res rv"><div class="fall" id="fall"></div><div class="rib">⭐ DESTAQUE · QUARTA E SÁBADO</div>
+    <h2>Reserve sua <span>Feijoada</span> 🍲</h2>
+    <p>Servida toda <b>quarta</b> e <b>sábado</b>. Reserve com 1 dia de antecedência e garanta a sua, para retirada ou entrega.</p>
+    <span class="gift">🎁 Quem reserva ganha: mini refrigerante grátis</span>
+    <img src="assets/img/feijoada.webp" alt="Feijoada Divina Marmita" width="900" height="600" loading="lazy">
+    <form class="f" id="res-form" novalidate>
+      <div class="row2">
+        <label>Seu nome<input id="rn" autocomplete="name" maxlength="60" placeholder="Maria Silva"></label>
+        <label>Data<select id="rd"></select></label>
       </div>
-      <form class="form" id="res-form" novalidate>
-        <div class="row2">
-          <label class="field">Seu nome<input id="rn" autocomplete="name" maxlength="60" placeholder="Maria Silva"></label>
-          <label class="field">Data<select id="rd"></select></label>
-        </div>
-        <div class="row2">
-          <label class="field">Tamanho<select id="rs"><option value="M">M · R$ 28,00 (porção única)</option><option value="G">G · R$ 35,00 (acompanhamentos separados)</option></select></label>
-          <label class="field">Quantidade<input id="rq" type="number" min="1" max="20" value="1" inputmode="numeric"></label>
-        </div>
-        <div class="row2">
-          <label class="field">Como receber<select id="rm"><option value="r">Retirada no local</option><option value="e">Entrega (+ R$ 2,99)</option></select></label>
-          <label class="field">Pagamento<select id="rp"></select></label>
-        </div>
-        <label class="field" id="rae" hidden>Endereço de entrega<input id="ra" autocomplete="street-address" maxlength="140" placeholder="Rua, número, bairro"></label>
-        <div class="err" id="re" role="alert" hidden></div>
-        <button class="btn btn--leaf" type="submit">Reservar pelo WhatsApp</button>
-      </form>
-    </div>
-  </section>
-
-  <section class="sec sec--ink" id="cantinho">
-    <div class="wrap grid2">
-      <div>
-        <div class="sec__head"><h2>Cantinho Divina</h2></div>
-        <p class="kicker">Combinações para tirar mais da sua refeição</p>
-        <div class="pairs" id="pairs" role="group" aria-label="Escolha um prato"></div>
-        <div class="pairing" id="pairing">Escolha um prato acima.</div>
+      <div class="row2">
+        <label>Tamanho<select id="rs"><option value="M">M · R$ 28,00 (porção única)</option><option value="G">G · R$ 35,00 (acompanhamentos separados)</option></select></label>
+        <label>Quantidade<input id="rq" type="number" min="1" max="20" value="1" inputmode="numeric"></label>
       </div>
-      <div>
-        <p class="kicker">Receitas da casa</p>
-        <details class="rec"><summary>Farofa crocante</summary><p>Derreta manteiga, doure alho e bacon picado, junte a farinha de mandioca aos poucos, mexendo até ficar crocante. Finalize com cheiro-verde.</p></details>
-        <details class="rec"><summary>Vinagrete fresquinho</summary><p>Pique tomate, cebola e pimentão em cubinhos. Tempere com sal, vinagre, azeite e cheiro-verde. Deixe descansar 15 minutos.</p></details>
-        <details class="rec"><summary>Couve refogada</summary><p>Fatie bem fininho e refogue em alho dourado por 2 minutos em fogo alto. Sal a gosto e pronto.</p></details>
-        <details class="rec"><summary>Macarrão alho e óleo</summary><p>Cozinhe o espaguete al dente. Doure alho fatiado no azeite, misture o macarrão com um pouco da água do cozimento e salsinha.</p></details>
+      <div class="row2">
+        <label>Como receber?<select id="rm"><option value="r">Retirada no local</option><option value="e">Entrega (+ R$ 2,99)</option></select></label>
+        <label>Pagamento<select id="rp"></select></label>
       </div>
-    </div>
-  </section>
-
-  <section class="wrap sec" id="vip">
-    <div class="vip" id="vip-box">
-      <div>
-        <h2 class="sec__h">Lista VIP</h2>
-        <p class="lead2">Cupom de frete grátis, promoções e o cardápio do dia direto no seu WhatsApp.</p>
-        <div class="chips mt" id="li" role="group" aria-label="Interesses"></div>
-      </div>
-      <form class="form" id="vip-form" novalidate>
-        <div class="row2">
-          <label class="field">Nome<input id="ln" autocomplete="name" maxlength="60" placeholder="Seu nome"></label>
-          <label class="field">WhatsApp com DDD<input id="lw" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(15) 9 9999-9999"></label>
-        </div>
-        <label class="field">E-mail (opcional)<input id="le" type="email" autocomplete="email" maxlength="100" placeholder="voce@email.com"></label>
-        <label class="ck"><input type="checkbox" id="lc"><span>Aceito receber mensagens da Divina Marmita e posso sair da lista quando quiser. Meus dados serão usados só para esse contato.</span></label>
-        <div class="err" id="le2" role="alert" hidden></div>
-        <button class="btn btn--ink" type="submit">Quero as vantagens</button>
-      </form>
-    </div>
-  </section>
-</main>
-
-<footer class="ft">
-  <div class="wrap">
-    <div><h3>Divina Marmita</h3><p>Qualidade, sabor e muito amor em cada marmita.</p></div>
-    <div>
-      <p>Rua João Mostafá, 602 – Bairro do Éden e região</p>
-      <p>Segunda a sábado · 11h–14h e 18h30–22h</p>
-      <p>Entrega até 3 km: R$ 2,99 · Retirada no local</p>
-    </div>
-    <div>
-      <p>WhatsApp <a href="https://wa.me/5515997857492" rel="noopener">15 99785-7492</a> · <a href="https://wa.me/5511964103889" rel="noopener">11 96410-3889</a></p>
-      <p>Instagram <a href="https://instagram.com/divina_marmita26" rel="noopener">@divina_marmita26</a></p>
-      <p class="tiny"><a href="painel/">Área do restaurante</a></p>
-    </div>
+      <label id="rae" hidden>Endereço de entrega<input id="ra" autocomplete="street-address" maxlength="140" placeholder="Rua, número, bairro"></label>
+      <div class="warn" id="re" role="alert" hidden></div>
+      <button class="btn g" type="submit">Reservar pelo WhatsApp</button>
+    </form>
   </div>
+</section>
+
+<section id="cardapio">
+  <div class="st-h"><h2>Cardápio <em>do dia</em></h2><p>Pedido mínimo de R$ 25,00 · Escolha o tamanho e adicione</p></div>
+  <div class="upd" id="upd">Carregando o cardápio…</div>
+  <label class="search"><span class="sr">Buscar no cardápio</span><input id="q" type="search" placeholder="🔍 Buscar no cardápio" autocomplete="off"></label>
+  <div class="tabs" id="cats" role="group" aria-label="Ir para a categoria"></div>
+  <div id="menu"></div>
+  <div class="ctr mt"><a class="btn g wl">💬 Prefere pedir conversando? Chame no WhatsApp</a></div>
+</section>
+
+<section id="cantinho">
+  <div class="st-h"><h2>Cantinho <em>Divina</em></h2><p>Combinações, receitas e curiosidades para tornar sua refeição ainda mais saborosa</p></div>
+  <h3 class="sub">🍽️ Monte sua combinação ideal</h3>
+  <div class="chips" id="pairs" role="group" aria-label="Escolha um prato"></div>
+  <div class="tip" id="pairing">Escolha um prato acima 👆</div>
+  <h3 class="sub">📖 Receitas da casa</h3>
+  <details class="tip"><summary>🌽 Farofa crocante</summary><p>Derreta manteiga, doure alho e bacon picado, junte a farinha de mandioca aos poucos, mexendo até ficar crocante. Finalize com cheiro-verde.</p></details>
+  <details class="tip"><summary>🍅 Vinagrete fresquinho</summary><p>Pique tomate, cebola e pimentão em cubinhos. Tempere com sal, vinagre, azeite e cheiro-verde. Deixe descansar 15 minutos.</p></details>
+  <details class="tip"><summary>🥬 Couve refogada</summary><p>Fatie bem fininho e refogue em alho dourado por 2 minutos em fogo alto. Sal a gosto e pronto.</p></details>
+  <details class="tip"><summary>🍝 Macarrão alho e óleo</summary><p>Cozinhe o espaguete al dente. Doure alho fatiado no azeite, misture o macarrão com um pouco da água do cozimento e salsinha.</p></details>
+  <h3 class="sub">💡 Você sabia?</h3>
+  <div class="how">
+    <div><i>🍲</i>A feijoada é um prato símbolo do Brasil, tradicionalmente servida com couve, farofa, arroz e laranja.</div>
+    <div><i>🥩</i>O lagarto é um corte magro e firme. Na panela de pressão fica macio e suculento em menos tempo.</div>
+    <div><i>🌾</i>A farofa, feita de farinha de mandioca, é um dos acompanhamentos mais brasileiros que existem.</div>
+    <div><i>🧀</i>A parmegiana de frango é queridinha das marmitas: empanada, com molho e queijo derretido.</div>
+  </div>
+</section>
+
+<section>
+  <div class="st-h rv"><h2>Pratos que <em>encantam</em></h2><p>Deslize e veja o que sai da nossa cozinha</p></div>
+  <div class="gal" id="gal"></div>
+  <div class="ctr mt"><a class="btn g wl">💬 Quero pedir agora</a></div>
+</section>
+
+<section>
+  <div class="st-h rv"><h2>Como <em>funciona</em></h2></div>
+  <div class="how rv"><div><i>1️⃣</i>Escolha o prato e o tamanho</div><div><i>2️⃣</i>Revise o carrinho e informe seus dados</div><div><i>3️⃣</i>Enviamos o pedido pronto no WhatsApp</div><div><i>🛵</i>Receba quentinho em casa</div></div>
+</section>
+
+<section id="vip"><div class="vip rv" id="vip-box">
+  <h2>Entre para a lista <em>VIP</em> 🎁</h2>
+  <p>Receba promoções exclusivas, cupons de frete grátis e o cardápio do dia direto no seu WhatsApp.</p>
+  <div class="chips" id="li" role="group" aria-label="Interesses"></div>
+  <form class="f" id="vip-form" novalidate>
+    <div class="row2"><label>Nome<input id="ln" autocomplete="name" maxlength="60" placeholder="Seu nome"></label><label>WhatsApp com DDD<input id="lw" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(15) 9 9999-9999"></label></div>
+    <label>E-mail (opcional)<input id="le" type="email" autocomplete="email" maxlength="100" placeholder="voce@email.com"></label>
+    <label class="ck"><input type="checkbox" id="lc">Aceito receber mensagens da Divina Marmita e posso sair da lista quando quiser. Meus dados serão usados só para contato da Divina Marmita.</label>
+    <div class="warn" id="le2" role="alert" hidden></div>
+    <button class="btn" type="submit">Quero minhas vantagens</button>
+  </form>
+</div></section>
+
+<footer>
+  <h3>Divina Marmita</h3>
+  <p>Qualidade, sabor e muito amor em cada marmita.</p>
+  <p>📍 Rua João Mostafá, 602 – Bairro do Éden e região<br>🕒 Segunda a sábado · 11h–14h e 18h30–22h</p>
+  <p>🛵 Entrega até 3 km: R$ 2,99 · Retirada no local</p>
+  <p>💳 Pix · Link de pagamento · Débito e crédito · Dinheiro</p>
+  <p>📱 <a href="https://wa.me/5515997857492" rel="noopener">15 99785-7492</a> · <a href="https://wa.me/5511964103889" rel="noopener">11 96410-3889</a></p>
+  <p>📸 <a href="https://instagram.com/divina_marmita26" rel="noopener">@divina_marmita26</a></p>
+  <p><a href="painel/" class="tiny">🔐 Área do restaurante</a></p>
+  <p class="tiny">© Divina Marmita – Sabor caseiro, feito com amor</p>
 </footer>
 
-<a class="fab-wa" id="wa" href="#" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg></a>
-<button class="tab" id="tab" hidden><span><span class="n" id="tab-n">0</span>Ver pedido</span><span class="t" id="tab-t">R$ 0,00</span></button>
+<a class="wfl wl" aria-label="WhatsApp">💬</a>
+<button class="fab" id="tab" hidden><span id="tab-c">🛒 0 itens</span><span id="tab-t">R$ 0,00</span></button>
 
-<dialog class="sheet" id="sheet" aria-labelledby="sheet-t"><div class="sheet__in" id="sheet-in"></div></dialog>
+<dialog class="dr" id="sheet" aria-labelledby="sheet-t"><div class="dr__in" id="sheet-in"></div></dialog>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script type="module" src="assets/js/site/main.js"></script>

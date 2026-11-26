@@ -23,7 +23,7 @@ function draw(o) {
   bar.replaceChildren(h('div', { class: 'track__in' },
     h('b', {}, `Pedido #${o.id.slice(0, 6).toUpperCase()} · ${LABEL[o.status]}`),
     h('div', { class: 'steps', role: 'img', 'aria-label': `Etapa ${Math.max(idx, 0) + 1} de 4` }, ...FLOW.map((_, i) => h('i', { class: i <= idx && o.status !== 'cancelado' ? 'on' : '' }))),
-    h('span', { class: 'mono' }, o.status === 'concluido' || o.status === 'cancelado' ? customerText(o) : `${customerText(o)} Até ~${hhmm(end)}`),
+    h('small', {}, o.status === 'concluido' || o.status === 'cancelado' ? customerText(o) : `${customerText(o)} Até ~${hhmm(end)}`),
     (o.status === 'concluido' || o.status === 'cancelado') ? h('button', { type: 'button', onclick: () => { save('order', null); unsub && unsub(); bar.hidden = true; } }, 'Fechar') : null,
   ));
 }

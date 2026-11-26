@@ -1,9 +1,9 @@
-import { $, h } from '../lib/dom.js';
+import { $, h, fill } from '../lib/dom.js';
 
 const sheet = $('#sheet'), body = $('#sheet-in');
 /** Abre a folha (diálogo nativo: foco preso, ESC fecha, leitores de tela entendem). */
 export function openSheet(...nodes) {
-  body.replaceChildren(h('button', { class: 'sheet__x', 'aria-label': 'Fechar', onclick: closeSheet }, '×'), ...nodes);
+  fill(body, h('button', { class: 'lgx', 'aria-label': 'Fechar', onclick: closeSheet }, '×'), nodes);
   if (!sheet.open) sheet.showModal();
   body.scrollTop = 0;
 }

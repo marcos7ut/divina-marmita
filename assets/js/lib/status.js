@@ -1,12 +1,14 @@
 export const FLOW = ['novo', 'producao', 'pronto', 'concluido'];
-export const LABEL = { novo: 'Novo', producao: 'Na chapa', pronto: 'Pronto', concluido: 'Concluído', cancelado: 'Cancelado' };
+export const LABEL = { novo: 'Recebido', producao: 'Em preparo', pronto: 'Pronto', concluido: 'Entregue', cancelado: 'Cancelado' };
+/** Títulos das colunas do painel (linguagem da cozinha). */
+export const COL_LABEL = { novo: 'Novos pedidos', producao: 'Em preparo', pronto: 'Prontos', concluido: 'Entregues' };
 export const next = (s) => FLOW[FLOW.indexOf(s) + 1] || null;
 export const prev = (s) => (FLOW.indexOf(s) > 0 ? FLOW[FLOW.indexOf(s) - 1] : null);
 /** Texto do botão de avançar, depende de entrega/retirada. */
 export function actionLabel(o) {
-  if (o.status === 'novo') return 'Iniciar preparo';
-  if (o.status === 'producao') return o.tipo === 'e' ? 'Saiu para entrega' : 'Pronto para retirar';
-  if (o.status === 'pronto') return 'Concluir';
+  if (o.status === 'novo') return 'Começar a fazer';
+  if (o.status === 'producao') return o.tipo === 'e' ? 'Saiu para entrega' : 'Pronto p/ retirar';
+  if (o.status === 'pronto') return 'Marcar como entregue';
   return '';
 }
 /** Patch de atualização, carimbando a hora de cada etapa (usado nas métricas). */

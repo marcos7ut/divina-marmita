@@ -34,30 +34,30 @@ test('painel recusa senha errada e aceita a certa', async () => {
 test('dono ativa, esgota e oculta pratos e o site muda na hora', async () => {
   await pn.click('[role=tab]:has-text("Cardápio")');
   const row = (n) => pn.locator('.prow', { hasText: n }).first();
-  await row('Parmegiana de Frango').locator('button[data-v=ativo]').click();
-  await row('Bife Acebolado').locator('button[data-v=esgotado]').click();
-  await row('Lasanha').locator('button[data-v=oculto]').click();
-  await site.waitForFunction(() => [...document.querySelectorAll('.row b')].some((b) => b.textContent === 'Parmegiana de Frango'));
-  const names = await site.$$eval('.row b', (e) => e.map((x) => x.textContent));
+  await row('Parmegiana de Frango').locator('.sw').click();      // liga a chave
+  await row('Bife Acebolado').locator('.acabou').click();         // "Acabou hoje"
+  await row('Lasanha').locator('.sw').click();                    // desliga a chave
+  await site.waitForFunction(() => [...document.querySelectorAll('.it2 b')].some((b) => b.textContent === 'Parmegiana de Frango'));
+  const names = await site.$$eval('.it2 b', (e) => e.map((x) => x.textContent));
   assert.ok(!names.includes('Lasanha'));
-  assert.equal(await site.$eval('.row[aria-disabled=true] b', (e) => e.textContent), 'Bife Acebolado');
+  assert.equal(await site.$eval('.it2[aria-disabled=true] b', (e) => e.textContent), 'Bife Acebolado');
 });
 
 test('cliente faz o pedido, cozinha avança, cliente acompanha', async () => {
-  await site.click('.row:has-text("Parmegiana de Frango")');
+  await site.click('.it2:has-text("Parmegiana de Frango")');
   await site.click('.opt:has-text("G")');
-  await site.click('#sheet-in .btn--leaf');
+  await site.click('#sheet-in .btn.g');
   await site.click('#tab');
   await site.fill('#c-nome', 'Maria Silva'); await site.fill('#c-end', 'Rua das Flores, 10');
   await site.click('#c-form button[type=submit]');
   await site.waitForSelector('#track:not([hidden])');
-  assert.match(await site.textContent('#track'), /Novo/);
+  assert.match(await site.textContent('#track'), /Recebido/);
 
   await pn.click('[role=tab]:has-text("Pedidos")');
   await pn.waitForSelector('.col[data-s=novo] .tk');
   assert.match(await pn.textContent('.kpis'), /R\$ 32,99/);
-  for (const [from, to] of [['novo', 'Na chapa'], ['producao', 'Pronto'], ['pronto', 'Concluído']]) {
-    await pn.click(`.col[data-s=${from}] .tk .btn:not(.btn--ghost)`);
+  for (const [from, to] of [['novo', 'Em preparo'], ['producao', 'Pronto'], ['pronto', 'Entregue']]) {
+    await pn.click(`.col[data-s=${from}] .tk .btn.main`);
     await site.waitForFunction((t) => document.querySelector('#track b').textContent.includes(t), to);
   }
 });
@@ -71,11 +71,19 @@ test('pausar pedidos no painel aparece no site e bloqueia o envio', async () => 
 test('texto malicioso no nome vira texto, nunca HTML', async () => {
   await site.evaluate(() => localStorage.removeItem('dm:last'));
   await site.reload();
-  await site.click('.row:has-text("Parmegiana de Frango")'); await site.click('#sheet-in .btn--leaf'); await site.click('#tab');
+  await site.click('.it2:has-text("Parmegiana de Frango")'); await site.click('#sheet-in .btn.g'); await site.click('#tab');
   await site.fill('#c-nome', '<img src=x onerror=window.__xss=1>'); await site.fill('#c-end', 'Rua das Flores, 10');
   await site.click('#c-form button[type=submit]');
   await pn.click('[role=tab]:has-text("Pedidos")');
   await pn.waitForSelector('.col[data-s=novo] .tk');
   assert.equal(await pn.evaluate(() => window.__xss), undefined);
   assert.match(await pn.textContent('.col[data-s=novo] .tk'), /<img src=x/);
+  assert.ok(!(await pn.textContent('body')).includes('null'), 'a palavra null apareceu na tela');
+});
+
+test('prato de tamanho único abre sem texto sobrando ("null")', async () => {
+  await site.reload();
+  await site.click('.it2:has-text("Prato do Dia Completo")');
+  await site.waitForSelector('#sheet-in .btn.g');
+  assert.ok(!(await site.textContent('#sheet-in')).includes('null'));
 });
