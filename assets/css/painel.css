@@ -137,3 +137,44 @@ details.resumo{margin-top:16px}details.resumo>summary{cursor:pointer;font-weight
   @page{size:80mm auto;margin:0}
 }
 @media(max-width:640px){.tabs{flex:1 1 100%;margin-left:0}.tabs button{flex:1;padding:8px 6px;font-size:.78rem;text-align:center}.top__in{padding-block:.5rem}.sair{margin-left:auto}}
+
+/* sequência e dinheiro */
+.tk--up{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,197,24,.55)}
+.upbar{background:var(--gold);color:var(--ink);font-weight:700;font-size:.78rem;letter-spacing:.06em;text-align:center;padding:4px;border-radius:8px;margin:-4px 0 8px}
+.posbar{color:var(--mut);font-weight:600;font-size:.76rem;margin-bottom:4px}
+.tk__h .num{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:2px 10px;font-weight:700;font-size:1rem}
+.tk__h b{flex:1}
+.pill.t{background:rgba(31,157,87,.25);color:#7be3a5}.pill.t.y{background:rgba(245,197,24,.22);color:var(--gold)}.pill.t.r{background:rgba(214,40,40,.3);color:#ff9d9d}
+.pill.rider{background:var(--line)}
+.tk a.addr{display:block;color:var(--tx);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.cash{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:.86rem}
+.cash.ok{border-color:var(--green);color:#7be3a5}.cash.warn2{border-color:var(--gold)}
+.cash .levar{color:var(--gold)}
+.cash .btn{margin-left:auto}
+.dlg{margin:auto;width:min(420px,calc(100% - 24px))}
+.dlg__in{background:var(--bg);border:1px solid var(--line);border-radius:22px;padding:18px}
+.dlg h3{font-size:1.3rem;margin-bottom:6px}
+.dlg p{color:var(--mut);font-size:.9rem;margin-bottom:12px}
+.dlg .opts{display:grid;gap:8px}
+.dlg .opts .btn{justify-content:space-between;width:100%}
+.dlg .opts small{font-weight:500;opacity:.8}
+.cols{grid-template-columns:1fr}
+@media(min-width:760px){.cols{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1280px){.cols{grid-template-columns:repeat(5,1fr)}}
+
+/* aba Entregas */
+.moto{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0}
+.moto h3{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:1.25rem}
+.moto h3 span{font:600 .8rem var(--f-body);background:var(--line);padding:2px 12px;border-radius:99px}
+.moto .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+@media(min-width:700px){.moto .stats{grid-template-columns:repeat(4,1fr)}}
+.moto .stats div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.moto .stats small{display:block;color:var(--mut);font-size:.7rem}
+.moto .stats b{font-size:1.1rem}
+.rota{display:grid;gap:10px}
+@media(min-width:900px){.rota{grid-template-columns:repeat(2,1fr)}}
+.sendrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sendrow .btn{flex:1;min-width:110px}
+.empty2{color:var(--mut);font-size:.88rem;padding:6px 2px}
+.sec2{margin:20px 0 6px;font-size:1.1rem}
+.mrow{display:flex;gap:8px;align-items:center;margin:6px 0}.mrow input{flex:1}

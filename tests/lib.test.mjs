@@ -7,7 +7,8 @@ import { add, change, totals, lines, MIN_ORDER, FEE } from '../assets/js/lib/car
 import { estimate, isLate, queueSize } from '../assets/js/lib/eta.js';
 import { buildOrder, buildLead } from '../assets/js/lib/validate.js';
 import { summarize, leadsCsv } from '../assets/js/lib/stats.js';
-import { transition, next, prev } from '../assets/js/lib/status.js';
+import { transition, next, prev, flowOf, customerText } from '../assets/js/lib/status.js';
+import { numbering, queue, waitingBefore, money, motoSummary, parseMoney, byArrival } from '../assets/js/lib/orders.js';
 import { orderMessage } from '../assets/js/lib/wa.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../data/menu.json', import.meta.url)));
@@ -178,9 +179,15 @@ test('transições carimbam a etapa', () => {
   const o = { t: 100, status: 'novo' };
   const p = transition(o, 'producao', 200);
   assert.deepEqual(p, { status: 'producao', ts: { novo: 100, producao: 200 } });
-  assert.equal(next('pronto'), 'concluido');
-  assert.equal(next('concluido'), null);
-  assert.equal(prev('novo'), null);
+  const e = { tipo: 'e', status: 'pronto' }, r = { tipo: 'r', status: 'pronto' };
+  assert.equal(next(e), 'saiu');                       // entrega passa pela rua
+  assert.equal(next(r), 'concluido');                  // retirada não
+  assert.equal(next({ ...e, status: 'saiu' }), 'concluido');
+  assert.equal(next({ ...e, status: 'concluido' }), null);
+  assert.equal(prev({ ...e, status: 'novo' }), null);
+  assert.equal(prev({ ...e, status: 'saiu' }), 'pronto');
+  assert.deepEqual(flowOf(r), ['novo', 'producao', 'pronto', 'concluido']);
+  assert.match(customerText({ ...e, status: 'saiu', moto: 'João' }), /com João/);
 });
 
 test('mensagem de WhatsApp contém itens, total e previsão', () => {
@@ -201,4 +208,62 @@ test('ago', () => {
   assert.equal(ago(0, 30000), 'agora');
   assert.equal(ago(0, 5 * 60000), 'há 5 min');
   assert.equal(ago(0, 65 * 60000), 'há 1 h 05');
+});
+
+const O = (id, t, over = {}) => ({ id, t, status: 'novo', nome: id, tipo: 'e', pag: 'Pix', total: 30, taxa: 2.99, itens: [], eta: { min: 20, max: 30 }, ...over });
+
+test('numeração e fila seguem a ordem de chegada do servidor, não a do aparelho', () => {
+  // "b" tem relógio do celular adiantado (t maior), mas chegou ao servidor ANTES de "c"
+  const list = [O('c', 100, { rec: 300 }), O('a', 500, { rec: 100 }), O('b', 900, { rec: 200 })];
+  const n = numbering(list);
+  assert.equal(n.get('a'), 1); assert.equal(n.get('b'), 2); assert.equal(n.get('c'), 3);
+  assert.deepEqual(queue(list, 'novo').map((o) => o.id), ['a', 'b', 'c']);
+});
+
+test('sem rec (modo demonstração) usa a hora do pedido; empate desempata por id', () => {
+  const list = [O('z', 10), O('y', 10), O('x', 5)];
+  assert.deepEqual(list.sort(byArrival).map((o) => o.id), ['x', 'y', 'z']);
+});
+
+test('waitingBefore avisa quem chegou antes e ainda não começou', () => {
+  const list = [O('a', 1), O('b', 2), O('c', 3, { status: 'producao' })];
+  assert.deepEqual(waitingBefore(list, list[1]).map((o) => o.id), ['a']);
+  assert.deepEqual(waitingBefore(list, list[0]), []);
+});
+
+test('dinheiro: cobrar, troco e quanto levar', () => {
+  assert.equal(parseMoney('R$ 50'), 50); assert.equal(parseMoney('50,00'), 50); assert.equal(parseMoney('1.000,50'), 1000.5); assert.equal(parseMoney(''), null);
+  const m = money(O('a', 1, { pag: 'Dinheiro', total: 32.99, troco: 'R$ 50' }));
+  assert.deepEqual([m.kind, m.cobrar, m.troco, m.levar], ['dinheiro', 32.99, 50, 17.01]);
+  assert.equal(money(O('a', 1, { pag: 'Dinheiro', total: 32.99, troco: '' })).levar, null);
+  assert.equal(money(O('a', 1, { pag: 'Dinheiro', total: 32.99, troco: 'R$ 30' })).levar, null); // troco menor que o total
+  assert.equal(money(O('a', 1, { pag: 'Débito/Crédito na entrega' })).kind, 'maquininha');
+  assert.equal(money(O('a', 1, { pag: 'Pix' })).kind, 'confirmar');
+  assert.equal(money(O('a', 1, { pag: 'Pix', pago: true })).cobrar, 0);
+});
+
+test('acerto por entregador: rua, taxas e dinheiro a prestar contas', () => {
+  const list = [
+    O('1', 1, { status: 'saiu', moto: 'João', pag: 'Dinheiro', total: 40 }),
+    O('2', 2, { status: 'saiu', moto: 'João', pag: 'Pix', pago: true, total: 30 }),
+    O('3', 3, { status: 'concluido', moto: 'João', pag: 'Dinheiro', total: 28.99 }),
+    O('4', 4, { status: 'concluido', moto: 'João', pag: 'Débito/Crédito na entrega', total: 26 }),
+    O('5', 5, { status: 'concluido', moto: 'Pedro', pag: 'Pix', pago: true, total: 50 }),
+    O('6', 6, { status: 'cancelado', moto: 'Pedro', total: 99 }),
+  ];
+  const [joao, pedro, ana] = motoSummary(list, ['João', 'Pedro', 'Ana']);
+  assert.equal(joao.rua.length, 2); assert.equal(joao.cobrarNaRua, 40);
+  assert.equal(joao.entregues, 2); assert.equal(joao.taxas, 5.98);
+  assert.equal(joao.acertoDinheiro, 28.99); assert.equal(joao.acertoMaquininha, 26);
+  assert.equal(pedro.entregues, 1); assert.equal(pedro.acertoDinheiro, 0);
+  assert.equal(ana.entregues, 0);
+});
+
+test('estatísticas: valor por forma de pagamento e Pix a conferir', () => {
+  const t = 1000;
+  const list = [O('1', t, { status: 'producao', pag: 'Pix', total: 30 }), O('2', t, { status: 'concluido', pag: 'Dinheiro', total: 20.5 }), O('3', t, { status: 'pronto', pag: 'Pix', pago: true, total: 10 })];
+  const s = summarize(list, t);
+  assert.equal(s.payValue.Pix, 40); assert.equal(s.payValue.Dinheiro, 20.5);
+  assert.equal(s.toConfirm, 1); assert.equal(s.toConfirmValue, 30);
+  assert.equal(s.fees, 8.97);
 });

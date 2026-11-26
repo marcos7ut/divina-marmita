@@ -14,13 +14,15 @@ export function summarize(orders, now = Date.now()) {
   const dish = new Map();
   valid.forEach((o) => o.itens.forEach((i) => dish.set(i.n, (dish.get(i.n) || 0) + i.q)));
   const top = [...dish.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 6).map(([n, q]) => ({ n, q }));
-  const pay = {};
-  valid.forEach((o) => { pay[o.pag] = (pay[o.pag] || 0) + 1; });
+  const pay = {}, payValue = {};
+  valid.forEach((o) => { pay[o.pag] = (pay[o.pag] || 0) + 1; payValue[o.pag] = cents((payValue[o.pag] || 0) + o.total); });
+  const toConfirm = valid.filter((o) => (o.pag === 'Pix' || o.pag.startsWith('Link')) && !o.pago && o.status !== 'novo');
   return {
     count: valid.length, revenue, ticket: valid.length ? cents(revenue / valid.length) : 0,
     queue: queue.length, late: orders.filter((o) => isLate(o, now)).length,
     avgPrep, byHour, top, delivery: valid.filter((o) => o.tipo === 'e').length, pickup: valid.filter((o) => o.tipo === 'r').length,
-    pay, cancelled: orders.length - valid.length,
+    pay, payValue, toConfirm: toConfirm.length, toConfirmValue: cents(toConfirm.reduce((a, o) => a + o.total, 0)), fees: cents(valid.reduce((a, o) => a + (o.taxa || 0), 0)),
+    cancelled: orders.length - valid.length,
   };
 }
 

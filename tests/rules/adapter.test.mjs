@@ -75,6 +75,8 @@ test('pedido: cliente cria, acompanha; dono lista do dia, avança etapas', async
   await boss.updateOrder(o.id, transition(o, 'producao'));
   await wait(() => mine.status === 'producao');
   assert.ok(mine.ts.producao && mine.ts.novo);
+  assert.equal(typeof mine.rec, 'number');            // hora do servidor chegou como número
+  assert.ok(Math.abs(mine.rec - Date.now()) < 60000);
   // cliente não consegue listar nem alterar
   await assert.rejects(pub.updateOrder(o.id, { status: 'concluido' }), (e) => e.code === 'permission-denied');
 });
@@ -86,6 +88,16 @@ test('lista VIP: cliente cadastra, só o dono lê', async () => {
   await wait(() => leads && leads.length === 1);
   let err = null;
   unsubs.push(pub.onLeads(() => {}, (e) => { err = e; }));
+  await wait(() => err);
+  assert.equal(err.code, 'permission-denied');
+});
+
+test('equipe: dono grava e lê os entregadores; cliente não lê', async () => {
+  let team = null, err = null;
+  unsubs.push(boss.onTeam((t) => { team = t; }));
+  await boss.setTeam({ motos: ['João', 'Pedro'] });
+  await wait(() => team && team.motos.length === 2);
+  unsubs.push(pub.onTeam(() => {}, (e) => { err = e; }));
   await wait(() => err);
   assert.equal(err.code, 'permission-denied');
 });

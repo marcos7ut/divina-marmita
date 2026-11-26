@@ -3,7 +3,9 @@
 Cardápio online com **painel da cozinha em tempo real**, feito para uma marmitaria de bairro.
 
 - **Cliente**: vê o *quadro do dia* ao vivo, pede, recebe a previsão de prazo e acompanha o pedido até chegar. O pedido também vai pelo WhatsApp.
-- **Dono**: entra com e-mail e senha, liga/esgota/oculta pratos, recebe pedidos com aviso sonoro, avança cada etapa, imprime a comanda (80 mm) e acompanha faturamento, ticket médio, fila, atrasos e tempo de preparo.
+- **Cozinha e dono**: pedidos numerados na ordem de chegada (o painel marca o **▶ PRÓXIMO** e avisa antes de furar a fila), aviso sonoro repetido, ligar/esgotar pratos com uma chave, impressão da comanda (80 mm).
+- **Entregas**: ao sair, escolhe-se o entregador; a aba **Entregas** mostra o que cada um leva, quanto cobrar (com troco), taxas e o dinheiro a acertar no fim do dia.
+- **Caixa**: vendas por forma de pagamento, Pix a conferir, ticket médio, atrasos e tempo de preparo.
 - **Sem servidor para manter**: GitHub Pages + Firebase (plano gratuito).
 
 ## Começar
