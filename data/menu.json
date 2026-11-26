@@ -2,43 +2,53 @@
  "categorias": [
   {
    "id": "dia",
-   "nome": "Prato do dia"
+   "nome": "Prato do dia",
+   "icone": "🍽️"
   },
   {
    "id": "bov",
-   "nome": "Carnes bovinas"
+   "nome": "Carnes bovinas",
+   "icone": "🥩"
   },
   {
    "id": "fra",
-   "nome": "Frango"
+   "nome": "Frango",
+   "icone": "🍗"
   },
   {
    "id": "sui",
-   "nome": "Suínos e linguiças"
+   "nome": "Suínos e linguiças",
+   "icone": "🐷"
   },
   {
    "id": "fei",
-   "nome": "Feijoada"
+   "nome": "Feijoada",
+   "icone": "🍲"
   },
   {
    "id": "esp",
-   "nome": "Especiais"
+   "nome": "Especiais",
+   "icone": "⭐"
   },
   {
    "id": "add",
-   "nome": "Adicionais"
+   "nome": "Adicionais",
+   "icone": "➕"
   },
   {
    "id": "beb",
-   "nome": "Bebidas"
+   "nome": "Bebidas",
+   "icone": "🥤"
   },
   {
    "id": "sob",
-   "nome": "Sobremesas"
+   "nome": "Sobremesas",
+   "icone": "🍮"
   },
   {
    "id": "conv",
-   "nome": "Conveniência"
+   "nome": "Conveniência",
+   "icone": "🛒"
   }
  ],
  "pratos": [

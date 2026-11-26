@@ -16,3 +16,5 @@ export function h(tag, props = {}, ...kids) {
   return el;
 }
 export const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+/** Substitui os filhos ignorando null/false (replaceChildren puro escreveria "null" na tela). */
+export const fill = (el, ...kids) => el.replaceChildren(...kids.flat().filter((k) => k != null && k !== false));

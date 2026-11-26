@@ -1,4 +1,4 @@
-import { h } from '../lib/dom.js';
+import { h, fill } from '../lib/dom.js';
 import { brl } from '../lib/money.js';
 import { stateOf, applyState, bulkDoc, weekPlan } from '../lib/menuState.js';
 import { menuMessage } from '../lib/wa.js';
@@ -7,62 +7,76 @@ import { CONFIG } from '../config.js';
 
 export function renderMenuAdmin(root, S, { save, savePlan, toast }) {
   const st = S.menu(), q = (S.mq || '').toLowerCase();
-  const all = S.catalog.pratos, on = all.filter((p) => st.on.has(p.id)).length, out = all.filter((p) => st.out.has(p.id)).length;
+  const all = S.catalog.pratos;
+  const shown = all.filter((p) => st.on.has(p.id)).length;
+  const redraw = () => renderMenuAdmin(root, S, { save, savePlan, toast });
 
-  const set = (id, v) => save(applyState(S.catalog, st, id, v));
   const setCat = (cat, v) => {
-    const ids = all.filter((p) => p.cat === cat).map((p) => p.id);
     const nOn = new Set(st.on), nOut = new Set(st.out);
-    ids.forEach((id) => { v ? nOn.add(id) : (nOn.delete(id), nOut.delete(id)); });
+    all.filter((p) => p.cat === cat).forEach((p) => { v ? nOn.add(p.id) : (nOn.delete(p.id), nOut.delete(p.id)); });
     save(bulkDoc(nOn, nOut));
   };
 
-  const head = h('div', { class: 'mhead' },
-    h('span', { class: 'meter' }, `${on - out} ativos · ${out} esgotados · ${all.length - on} ocultos`),
-    h('input', { class: 'grow', type: 'search', placeholder: 'Buscar prato…', 'aria-label': 'Buscar prato', value: S.mq || '', oninput: (e) => { S.mq = e.target.value; renderMenuAdmin(root, S, { save, savePlan, toast }); const i = root.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }),
-    h('button', { class: 'btn btn--sm', type: 'button', onclick: () => save({ day: '0000-00-00', on: [], out: [] }, 'Voltou ao plano da semana') }, 'Voltar ao plano de hoje'),
-    h('button', { class: 'btn btn--sm btn--ghost', type: 'button', onclick: () => save(bulkDoc(all.map((p) => p.id), [])) }, 'Mostrar todos'),
-    h('button', { class: 'btn btn--sm btn--ghost', type: 'button', onclick: () => save(bulkDoc([], [])) }, 'Ocultar todos'),
-    h('button', { class: 'btn btn--sm btn--ghost', type: 'button', onclick: () => copy(all.filter((p) => st.on.has(p.id) && !st.out.has(p.id)), toast) }, 'Copiar para WhatsApp'),
+  const guide = h('details', { class: 'guide', open: S.guideOpen !== false, ontoggle: (e) => { S.guideOpen = e.target.open; } },
+    h('summary', {}, '👋 Como funciona (toque para abrir ou fechar)'),
+    h('ol', {},
+      h('li', {}, 'Cada prato tem uma ', h('b', {}, 'chave'), ' do lado direito.'),
+      h('li', {}, h('b', {}, 'Chave verde'), ' = o prato ', h('b', {}, 'aparece'), ' para o cliente. ', h('b', {}, 'Chave cinza'), ' = o prato ', h('b', {}, 'some'), ' do cardápio.'),
+      h('li', {}, 'Se o prato ', h('b', {}, 'acabou'), ' durante o dia, toque em ', h('b', {}, '“Acabou hoje”'), ': ele continua aparecendo, mas riscado, e ninguém consegue pedir.'),
+      h('li', {}, 'Não precisa salvar: ao tocar, o cliente já vê a mudança ', h('b', {}, 'na hora'), '.'),
+      h('li', {}, 'Errou? É só tocar de novo.'),
+      h('li', {}, 'À meia-noite o cardápio volta sozinho para o ', h('b', {}, 'plano da semana'), ' (lá embaixo você escolhe o plano de cada dia).'),
+    ));
+
+  const bar = h('div', {},
+    h('p', { class: 'pbar' }, h('b', {}, String(shown)), ` de ${all.length} pratos aparecendo hoje`),
+    h('div', { class: 'pact' },
+      h('button', { class: 'btn sm', type: 'button', onclick: () => save({ day: '0000-00-00', on: [], out: [] }, 'Voltou ao plano de hoje.') }, '📅 Voltar ao cardápio do dia'),
+      h('button', { class: 'btn out sm', type: 'button', onclick: () => save(bulkDoc(all.map((p) => p.id), [])) }, '✅ Mostrar todos'),
+      h('button', { class: 'btn out sm', type: 'button', onclick: () => save(bulkDoc([], [])) }, '⛔ Esconder todos'),
+      h('button', { class: 'btn out sm', type: 'button', onclick: () => copy(all.filter((p) => st.on.has(p.id) && !st.out.has(p.id)), toast) }, '📋 Copiar para WhatsApp'),
+    ),
+    h('input', { class: 'msearch', type: 'search', placeholder: '🔍 Buscar prato…', 'aria-label': 'Buscar prato', value: S.mq || '', oninput: (e) => { S.mq = e.target.value; redraw(); const i = root.querySelector('.msearch'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }),
   );
 
   const groups = S.catalog.categorias.map((c) => {
     const list = all.filter((p) => p.cat === c.id && (!q || p.nome.toLowerCase().includes(q)));
     if (!list.length) return null;
     return h('section', {},
-      h('div', { class: 'mcat' }, h('h3', {}, c.nome), h('span', {}, h('button', { class: 'btn btn--sm btn--ghost', type: 'button', onclick: () => setCat(c.id, true) }, 'Mostrar'), ' ', h('button', { class: 'btn btn--sm btn--ghost', type: 'button', onclick: () => setCat(c.id, false) }, 'Ocultar'))),
+      h('div', { class: 'ph3' }, h('b', {}, `${c.icone} ${c.nome} · ${list.filter((p) => st.on.has(p.id)).length}/${list.length}`),
+        h('span', {}, h('button', { class: 'btn out sm', type: 'button', onclick: () => setCat(c.id, true) }, 'Mostrar'), h('button', { class: 'btn out sm', type: 'button', onclick: () => setCat(c.id, false) }, 'Esconder'))),
       ...list.map((p) => {
-        const v = stateOf(st, p.id);
-        return h('div', { class: 'prow' },
-          h('span', { class: 'th' }, p.img ? h('img', { src: '../assets/img/' + p.img, alt: '', loading: 'lazy', width: 52, height: 52 }) : p.nome[0]),
-          h('span', {}, h('b', {}, p.nome), h('small', {}, p.tamanhos.map((t) => `${t.nome} ${brl(t.preco)}`).join(' · '), p.confirmarPreco ? h('i', {}, ' · confirmar preço') : null)),
-          h('span', { class: 'tri', role: 'group', 'aria-label': 'Estado de ' + p.nome }, ...[['ativo', 'Ativo'], ['esgotado', 'Esgotou'], ['oculto', 'Oculto']].map(([k, l]) => h('button', { type: 'button', 'data-v': k, 'aria-pressed': String(v === k), onclick: () => v !== k && set(p.id, k) }, l))),
+        const v = stateOf(st, p.id), on = v !== 'oculto';
+        return h('div', { class: 'prow' + (on ? '' : ' off') },
+          h('span', { class: 'pth' }, p.img ? h('img', { src: '../assets/img/' + p.img, alt: '', loading: 'lazy', width: 60, height: 60 }) : c.icone),
+          h('span', { class: 'pin' }, h('b', {}, p.nome), h('small', {}, p.tamanhos.map((t) => `${t.nome} ${brl(t.preco)}`).join(' · '), p.confirmarPreco ? ' · ⚠️ confirmar preço' : ''),
+            on ? h('button', { class: 'acabou', type: 'button', 'aria-pressed': String(v === 'esgotado'), onclick: () => save(applyState(S.catalog, st, p.id, v === 'esgotado' ? 'ativo' : 'esgotado')) }, v === 'esgotado' ? '↩ Voltou a ter' : 'Acabou hoje') : null),
+          h('button', { class: 'sw', type: 'button', role: 'switch', 'aria-checked': String(on), 'aria-label': `${on ? 'Esconder' : 'Mostrar'} ${p.nome}`, onclick: () => save(applyState(S.catalog, st, p.id, on ? 'oculto' : 'ativo')) }, h('i')),
         );
       }),
     );
   });
 
-  root.replaceChildren(head, h('p', { class: 'note' }, st.custom ? 'Você alterou o cardápio hoje. Os clientes veem exatamente o que está abaixo.' : 'Hoje vale o plano da semana. Mexer em qualquer prato cria o cardápio de hoje.'), ...groups.filter(Boolean), planner(S, savePlan));
+  fill(root, guide, bar, h('p', { class: 'note' }, st.custom ? 'Você mexeu no cardápio hoje. Os clientes veem exatamente o que está abaixo.' : 'Hoje está valendo o plano da semana. Ao mexer em qualquer prato, vira o cardápio de hoje.'), groups, planner(S, savePlan));
 }
 
 function copy(list, toast) {
   const t = menuMessage(list, CONFIG.negocio.whatsappExibicao);
-  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('Cardápio copiado. Cole no WhatsApp.')).catch(() => window.prompt('Copie o texto:', t));
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('Copiado! Agora é só colar no WhatsApp.')).catch(() => window.prompt('Copie o texto:', t));
 }
 
-/** Planejador: define o cardápio padrão de cada dia da semana. */
+/** Plano da semana: o cardápio que volta sozinho em cada dia. */
 function planner(S, savePlan) {
   const plan = weekPlan(S.catalog, S.planDoc);
   const d = S.planDay;
-  const sel = new Set(plan[d]);
-  const draft = S.planDraft && S.planDraftDay === d ? S.planDraft : sel;
-  S.planDraft = draft; S.planDraftDay = d;
+  if (!S.planDraft || S.planDraftDay !== d) { S.planDraft = new Set(plan[d]); S.planDraftDay = d; }
+  const draft = S.planDraft;
   const rerender = () => document.dispatchEvent(new CustomEvent('plan-redraw'));
-  return h('section', { class: 'card', style: null },
-    h('div', { class: 'mcat' }, h('h3', {}, 'Planejamento da semana')),
-    h('p', { class: 'note' }, 'Define o que aparece sozinho em cada dia, sem você precisar mexer. Hoje vale o plano, a menos que você altere acima.'),
+  return h('details', { class: 'card', open: !!S.planOpen, ontoggle: (e) => { S.planOpen = e.target.open; } },
+    h('summary', {}, '🗓️ Plano da semana (o que aparece sozinho em cada dia)'),
+    h('p', { class: 'note mt' }, 'Escolha o dia, marque os pratos que você costuma fazer nele e toque em salvar. Assim você não precisa ligar tudo toda manhã.'),
     h('div', { class: 'days' }, ...[1, 2, 3, 4, 5, 6].map((i) => h('button', { type: 'button', 'aria-pressed': String(d === i), onclick: () => { S.planDay = i; S.planDraft = null; rerender(); } }, WEEKDAYS[i]))),
     ...S.catalog.pratos.map((p) => h('label', { class: 'pick' }, h('input', { type: 'checkbox', checked: draft.has(p.id), onchange: (e) => { e.target.checked ? draft.add(p.id) : draft.delete(p.id); } }), h('span', {}, p.nome), h('small', {}, S.catalog.categorias.find((c) => c.id === p.cat).nome))),
-    h('div', { class: 'mhead mt' }, h('button', { class: 'btn', type: 'button', onclick: () => savePlan(d, [...draft]) }, `Salvar plano de ${WEEKDAYS[d]}`), h('button', { class: 'btn btn--ghost', type: 'button', onclick: () => { S.planDraft = null; rerender(); } }, 'Descartar mudanças')),
+    h('div', { class: 'pact mt' }, h('button', { class: 'btn g', type: 'button', onclick: () => savePlan(d, [...draft]) }, `Salvar plano de ${WEEKDAYS[d]}`), h('button', { class: 'btn out', type: 'button', onclick: () => { S.planDraft = null; rerender(); } }, 'Desfazer')),
   );
 }

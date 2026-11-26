@@ -31,7 +31,7 @@ export function initReserva() {
     const opened = window.open(link, '_blank', 'noopener');
     openSheet(h('div', { class: 'thx' }, h('div', { class: 'em' }, '🍲'), h('h3', { id: 'sheet-t' }, 'Reserva enviada!'),
       h('p', {}, 'Confirme no WhatsApp para garantir sua feijoada com o mini refri de brinde.'),
-      h('div', { class: 'links' }, h('a', { class: 'btn btn--leaf', href: link, target: '_blank', rel: 'noopener' }, opened ? 'Abrir o WhatsApp de novo' : 'Confirmar no WhatsApp'), h('button', { class: 'btn btn--ghost', type: 'button', onclick: closeSheet }, 'Fechar'))));
+      h('div', { class: 'links' }, h('a', { class: 'btn g', href: link, target: '_blank', rel: 'noopener' }, opened ? 'Abrir o WhatsApp de novo' : 'Confirmar no WhatsApp'), h('button', { class: 'btn', type: 'button', onclick: closeSheet }, 'Fechar'))));
   });
 }
 
@@ -39,7 +39,7 @@ export function initReserva() {
 const INTERESTS = ['Frete grátis', 'Promoções', 'Aviso da feijoada', 'Cardápio do dia'];
 export function initVip() {
   const on = new Set(INTERESTS);
-  const draw = () => $('#li').replaceChildren(...INTERESTS.map((i) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(on.has(i)), onclick: () => { on.has(i) ? on.delete(i) : on.add(i); draw(); } }, i)));
+  const draw = () => $('#li').replaceChildren(...INTERESTS.map((i) => h('button', { type: 'button', 'aria-pressed': String(on.has(i)), onclick: () => { on.has(i) ? on.delete(i) : on.add(i); draw(); } }, i)));
   draw();
   $('#vip-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -68,8 +68,8 @@ const PAIR = {
 export function initCantinho() {
   let cur = '';
   const draw = () => {
-    $('#pairs').replaceChildren(...Object.keys(PAIR).map((k) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(cur === k), onclick: () => { cur = k; draw(); } }, k)));
-    $('#pairing').replaceChildren(...(cur ? [h('b', {}, cur), ' combina com: ', h('p', {}, PAIR[cur]), h('a', { class: 'btn btn--sm mt', target: '_blank', rel: 'noopener', href: waLink(N.whatsapp, `Olá! Quero ${cur} com a combinação: ${PAIR[cur]}`) }, 'Pedir essa combinação')] : ['Escolha um prato acima.']));
+    $('#pairs').replaceChildren(...Object.keys(PAIR).map((k) => h('button', { type: 'button', 'aria-pressed': String(cur === k), onclick: () => { cur = k; draw(); } }, k)));
+    $('#pairing').replaceChildren(...(cur ? [h('b', {}, cur), ' combina com: ', h('p', {}, PAIR[cur]), h('a', { class: 'btn g sm mt', target: '_blank', rel: 'noopener', href: waLink(N.whatsapp, `Olá! Quero ${cur} com a combinação: ${PAIR[cur]}`) }, 'Pedir essa combinação')] : ['Escolha um prato acima.']));
   };
   draw();
 }
