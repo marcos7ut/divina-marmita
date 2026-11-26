@@ -28,7 +28,7 @@ export function createLocalStore() {
     mode: 'demo',
     demoLogin: DEMO_LOGIN,
     onMenu: watch('menu'), onOps: watch('ops'), onPlan: watch('plan'),
-    async createOrder(o) { const all = read('orders', {}); all[o.id] = o; write('orders', all); emit(); },
+    async createOrder(o) { const all = read('orders', {}); all[o.id] = { ...o, rec: Date.now() }; write('orders', all); emit(); },
     onOrder(id, cb) { let last; return sub(() => { const v = JSON.stringify(read('orders', {})[id] || null); if (v !== last) { last = v; cb(JSON.parse(v)); } }); },
     async addLead(l) { const all = read('leads', {}); all[l.id] = l; write('leads', all); emit(); },
     auth: {
@@ -39,6 +39,8 @@ export function createLocalStore() {
       },
       async signOut() { sessionStorage.removeItem(P + 'auth'); authSubs.forEach((f) => f()); },
     },
+    onTeam: (cb) => { let last; return sub(() => { const v = me() ? JSON.stringify(read('cfg:team', null)) : 'null'; if (v !== last) { last = v; cb(JSON.parse(v)); } }); },
+    async setTeam(v) { if (!me()) throw new Error('permission-denied'); doc('team').set(v); },
     async setMenu(v) { if (!me()) throw new Error('permission-denied'); doc('menu').set(v); },
     async setOps(v) { if (!me()) throw new Error('permission-denied'); doc('ops').set(v); },
     async setPlan(v) { if (!me()) throw new Error('permission-denied'); doc('plan').set(v); },

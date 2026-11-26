@@ -41,11 +41,12 @@ service cloud.firestore {
     function validOrder(orderId) {
       let d = request.resource.data;
       let now = request.time.toMillis();
-      return d.keys().hasOnly(['id', 't', 'status', 'nome', 'tel', 'tipo', 'end', 'pag', 'troco', 'obs', 'taxa', 'total', 'itens', 'eta'])
-        && d.keys().hasAll(['id', 't', 'status', 'nome', 'tipo', 'pag', 'taxa', 'total', 'itens', 'eta'])
+      return d.keys().hasOnly(['id', 't', 'rec', 'status', 'nome', 'tel', 'tipo', 'end', 'pag', 'troco', 'obs', 'taxa', 'total', 'itens', 'eta'])
+        && d.keys().hasAll(['id', 't', 'rec', 'status', 'nome', 'tipo', 'pag', 'taxa', 'total', 'itens', 'eta'])
         && orderId.matches('^[0-9a-f]{32}$')
         && d.id == orderId
         && d.status == 'novo'
+        && d.rec == request.time   // posição na fila = hora do servidor; impossível furar a fila
         && d.t is int && d.t > now - 600000 && d.t < now + 600000
         && d.nome is string && d.nome.size() >= 2 && d.nome.size() <= 60
         && (!('tel' in d) || (d.tel is string && d.tel.size() <= 13))
@@ -60,6 +61,11 @@ service cloud.firestore {
         && d.itens is list && d.itens.size() >= 1 && d.itens.size() <= 40
         && d.eta is map && d.eta.keys().hasOnly(['min', 'max'])
         && d.eta.min is int && d.eta.max is int && d.eta.min >= 0 && d.eta.max <= 600;
+    }
+
+    // ---------- Equipe (nomes dos entregadores): só o dono ----------
+    match /staff/{docId} {
+      allow read, write: if isOwner() && docId == 'team';
     }
 
     // ---------- Lista VIP ----------

@@ -1,5 +1,5 @@
 import { $, h } from '../lib/dom.js';
-import { FLOW, LABEL, customerText } from '../lib/status.js';
+import { flowOf, LABEL, customerText } from '../lib/status.js';
 import { hhmm } from '../lib/dates.js';
 import { S, load, save } from './state.js';
 
@@ -17,12 +17,12 @@ export function followOrder(id) {
 }
 
 function draw(o) {
-  const idx = FLOW.indexOf(o.status);
+  const flow = flowOf(o), idx = flow.indexOf(o.status);
   const end = o.t + o.eta.max * 60000;
   bar.hidden = false;
   bar.replaceChildren(h('div', { class: 'track__in' },
     h('b', {}, `Pedido #${o.id.slice(0, 6).toUpperCase()} · ${LABEL[o.status]}`),
-    h('div', { class: 'steps', role: 'img', 'aria-label': `Etapa ${Math.max(idx, 0) + 1} de 4` }, ...FLOW.map((_, i) => h('i', { class: i <= idx && o.status !== 'cancelado' ? 'on' : '' }))),
+    h('div', { class: 'steps', role: 'img', 'aria-label': `Etapa ${Math.max(idx, 0) + 1} de ${flow.length}` }, ...flow.map((_, i) => h('i', { class: i <= idx && o.status !== 'cancelado' ? 'on' : '' }))),
     h('small', {}, o.status === 'concluido' || o.status === 'cancelado' ? customerText(o) : `${customerText(o)} Até ~${hhmm(end)}`),
     (o.status === 'concluido' || o.status === 'cancelado') ? h('button', { type: 'button', onclick: () => { save('order', null); unsub && unsub(); bar.hidden = true; } }, 'Fechar') : null,
   ));

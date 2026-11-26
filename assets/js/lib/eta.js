@@ -20,4 +20,4 @@ export const queueSize = (orders) => orders.filter((o) => o.status === 'novo' ||
 
 /** Horário prometido ao cliente (ms) = hora do pedido + limite superior da previsão. */
 export const promisedAt = (o) => o.t + ((o.eta && o.eta.max) || 45) * 60000;
-export const isLate = (o, now = Date.now()) => (o.status === 'novo' || o.status === 'producao' || o.status === 'pronto') && now > promisedAt(o);
+export const isLate = (o, now = Date.now()) => ['novo', 'producao', 'pronto', 'saiu'].includes(o.status) && now > promisedAt(o);

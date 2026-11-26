@@ -2,7 +2,7 @@
 import test, { before, after, beforeEach } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
 
 const rules = readFileSync(new URL('../../firebase/firestore.rules', import.meta.url), 'utf8').replaceAll('OWNER_UID', 'dono');
 let env;
@@ -15,7 +15,7 @@ const owner = () => env.authenticatedContext('dono').firestore();
 const stranger = () => env.authenticatedContext('qualquer-um').firestore();
 
 const id = 'a'.repeat(32);
-const order = (over = {}) => ({ id, t: Date.now(), status: 'novo', nome: 'Maria', tel: '15999990000', tipo: 'e', end: 'Rua A, 10', pag: 'Pix', troco: '', obs: '', taxa: 2.99, total: 28.99, itens: [{ id: 'parm', n: 'Parmegiana', s: 'M', q: 1, p: 26 }], eta: { min: 30, max: 45 }, ...over });
+const order = (over = {}) => ({ id, t: Date.now(), rec: serverTimestamp(), status: 'novo', nome: 'Maria', tel: '15999990000', tipo: 'e', end: 'Rua A, 10', pag: 'Pix', troco: '', obs: '', taxa: 2.99, total: 28.99, itens: [{ id: 'parm', n: 'Parmegiana', s: 'M', q: 1, p: 26 }], eta: { min: 30, max: 45 }, ...over });
 const lead = (over = {}) => ({ id, t: Date.now(), nome: 'Ana', tel: '15999990000', email: '', interesses: 'Todos', ...over });
 
 test('público lê o cardápio e os ajustes', async () => {
@@ -55,6 +55,8 @@ test('pedido inválido é recusado', async () => {
   await bad({ tipo: 'e', end: '' }, 'entrega sem endereço');
   await bad({ id: 'b'.repeat(32) }, 'id do documento diferente do campo id');
   await bad({ admin: true }, 'campo extra');
+  await bad({ rec: 1 }, 'rec falsificado: furar a fila');
+  await bad({ rec: Date.now() - 86400000 }, 'rec no passado');
   await bad({ eta: { min: 1, max: 9999 } }, 'eta absurda');
   await assertFails(setDoc(doc(anon(), 'orders/curto'), order({ id: 'curto' })));
 });
@@ -96,6 +98,14 @@ test('lead inválido é recusado', async () => {
   await assertFails(setDoc(doc(anon(), 'leads/' + id), lead({ papel: 'admin' })));
 });
 
+test('equipe (entregadores): só o dono lê e grava', async () => {
+  await assertFails(setDoc(doc(anon(), 'staff/team'), { motos: ['A'] }));
+  await assertFails(setDoc(doc(stranger(), 'staff/team'), { motos: ['A'] }));
+  await assertSucceeds(setDoc(doc(owner(), 'staff/team'), { motos: ['João', 'Pedro'] }));
+  await assertSucceeds(getDoc(doc(owner(), 'staff/team')));
+  await assertFails(getDoc(doc(anon(), 'staff/team')));
+});
+
 test('qualquer outra coleção é negada', async () => {
   await assertFails(getDoc(doc(owner(), 'segredos/x')));
   await assertFails(setDoc(doc(owner(), 'segredos/x'), { a: 1 }));
@@ -110,10 +120,10 @@ test('pedido gerado pelo site (entrega e retirada) passa nas regras', async () =
   for (const mode of ['e', 'r']) {
     const r = buildOrder({ cart: { 'parm|M': 2, 'cola|Única': 1 }, catalog, mode, nome: 'Maria Silva', tel: '(15) 99999-1234', end: 'Rua das Flores, 10', pag: 'Dinheiro', troco: 'R$ 50', obs: 'sem cebola', eta: { min: 30, max: 45 } });
     if (!r.ok) throw new Error(r.error);
-    await assertSucceeds(setDoc(doc(anon(), 'orders/' + r.order.id), r.order));
+    await assertSucceeds(setDoc(doc(anon(), 'orders/' + r.order.id), { ...r.order, rec: serverTimestamp() }));
   }
   const semTel = buildOrder({ cart: { 'parm|M': 1 }, catalog, mode: 'r', nome: 'Zé', tel: '', pag: 'Pix', eta: { min: 20, max: 30 } });
-  await assertSucceeds(setDoc(doc(anon(), 'orders/' + semTel.order.id), semTel.order));
+  await assertSucceeds(setDoc(doc(anon(), 'orders/' + semTel.order.id), { ...semTel.order, rec: serverTimestamp() }));
 });
 
 test('lead gerado pelo site passa nas regras', async () => {
