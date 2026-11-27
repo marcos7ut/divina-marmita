@@ -18,7 +18,11 @@ export async function createFirebaseStore(config) {
     ac.initializeAppCheck(app, { provider: new ac.ReCaptchaV3Provider(config.appCheckSiteKey), isTokenAutoRefreshEnabled: true });
   }
   const db = fs.getFirestore(app);
-  const auth = au.getAuth(app);
+  // Só e-mail/senha: inicializa o Auth SEM o resolvedor de popup/redirect. Assim o SDK não carrega
+  // scripts do Google (apis.google.com) nem iframes, e a CSP continua restrita.
+  const auth = typeof indexedDB !== 'undefined'
+    ? au.initializeAuth(app, { persistence: [au.indexedDBLocalPersistence, au.browserLocalPersistence] })
+    : au.getAuth(app);
   // Só para desenvolvimento/testes locais com os emuladores do Firebase.
   if (config.emulator) {
     fs.connectFirestoreEmulator(db, config.emulator.firestore[0], config.emulator.firestore[1]);

@@ -14,7 +14,7 @@ Cardápio online com **painel da cozinha em tempo real**, feito para uma marmita
    ```bash
    npm install && npm run serve
    ```
-   Site em `http://localhost:8080` e painel em `http://localhost:8080/painel/` (login de demonstração `demo@divina.local` / `demo1234`). Abra os dois lado a lado.
+   Site em `http://localhost:8080/?demo=1` e painel em `http://localhost:8080/painel/?demo=1` (login de demonstração `demo@divina.local` / `demo1234`; o `?demo=1` usa dados só do navegador, sem tocar no Firebase). Abra os dois lado a lado.
 2. **Colocar no ar:** siga [`docs/SETUP-FIREBASE.md`](docs/SETUP-FIREBASE.md) (20–30 min, com links).
 
 ## Qualidade

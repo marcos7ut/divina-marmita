@@ -19,7 +19,7 @@ before(async () => {
   await ctx.route('https://wa.me/**', (r) => r.fulfill({ body: 'ok' }));
   const hook = (p, n) => { p.on('pageerror', (e) => errors.push(`${n}: ${e.message}`)); p.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(`${n}: ${m.text()}`); }); };
   site = await ctx.newPage(); pn = await ctx.newPage(); hook(site, 'site'); hook(pn, 'painel');
-  await site.goto(BASE + '/'); await pn.goto(BASE + '/painel/');
+  await site.goto(BASE + '/?demo=1'); await pn.goto(BASE + '/painel/?demo=1');
 });
 after(async () => { await browser.close(); server.kill(); assert.deepEqual(errors, [], 'erros no console'); });
 
@@ -34,7 +34,11 @@ test('painel recusa senha errada e aceita a certa', async () => {
 test('dono ativa, esgota e oculta pratos e o site muda na hora', async () => {
   await pn.click('[role=tab]:has-text("Cardápio")');
   const row = (n) => pn.locator('.prow', { hasText: n }).first();
-  await row('Parmegiana de Frango').locator('.sw').click();      // liga a chave
+  // o plano da semana muda por dia: garante que os três pratos começam LIGADOS, seja qual for o dia
+  for (const n of ['Parmegiana de Frango', 'Bife Acebolado', 'Lasanha']) {
+    const sw = row(n).locator('.sw');
+    if ((await sw.getAttribute('aria-checked')) === 'false') await sw.click();
+  }
   await row('Bife Acebolado').locator('.acabou').click();         // "Acabou hoje"
   await row('Lasanha').locator('.sw').click();                    // desliga a chave
   await site.waitForFunction(() => [...document.querySelectorAll('.it2 b')].some((b) => b.textContent === 'Parmegiana de Frango'));
