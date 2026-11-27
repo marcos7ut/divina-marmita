@@ -5,9 +5,13 @@
  * Veja docs/SETUP-FIREBASE.md.
  */
 export const CONFIG = {
-  // Cole aqui o objeto "firebaseConfig" do console do Firebase.
-  // Enquanto estiver null, o site roda em MODO DEMONSTRAÇÃO (dados só neste navegador).
-  firebase: null,
+  // Configuração do projeto Firebase (pública). Se for null, o site roda em MODO DEMONSTRAÇÃO.
+  firebase: {
+    apiKey: 'AIzaSyCdO_Drpo77Ed30L0x3kgpu59kywduZCdM',
+    authDomain: 'divina-marmita-cf91a.firebaseapp.com',
+    projectId: 'divina-marmita-cf91a',
+    appId: '1:116880148221:web:40334ae58112286e4fa094',
+  },
   /* Exemplo:
   firebase: {
     apiKey: 'AIza...', authDomain: 'SEU-PROJETO.firebaseapp.com',
